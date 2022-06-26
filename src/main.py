@@ -22,10 +22,10 @@ class GameWindow:
         self.WINDOW_WIDTH = 640
         self.WINDOW_HEIGHT = 640
         pygame.display.set_caption('Square.io')
-        pygame.display.set_icon(pygame.image.load('./img/Logo.png'))
+        pygame.display.set_icon(pygame.image.load('../img/Logo.png'))
 
         # Menu : Title img
-        self.title_img = pygame.image.load('./img/game_title.png')
+        self.title_img = pygame.image.load('../img/game_title.png')
         self.title_rect = self.title_img.get_rect()
         self.title_rect.center = (320, 130)
 
@@ -33,8 +33,8 @@ class GameWindow:
         self.fps = 60
 
         # Load fonts
-        self.text_font = Font(pygame.image.load('./img/large_pygame_font.png'))
-        self.title_font = Font(pygame.image.load('./img/titles_pygame_font.png'))
+        self.text_font = Font(pygame.image.load('../img/large_pygame_font.png'))
+        self.title_font = Font(pygame.image.load('../img/titles_pygame_font.png'))
 
         # Music setup
         self.STATUS = ['OFF', 'ON']
@@ -75,7 +75,7 @@ class GameWindow:
 
     @staticmethod
     def load_data() -> list[dict]:
-        with open('./data/leaderboard.json', 'r') as f:
+        with open('../data/leaderboard.json', 'r') as f:
             return json.load(f)
 
     def start_game(self) -> None:  # Method to begin game loop (game update in loop)
@@ -182,7 +182,7 @@ class GameWindow:
         self.close_window()
 
     def close_window(self) -> None:
-        with open('./data/leaderboard.json', 'w') as f:
+        with open('../data/leaderboard.json', 'w') as f:
             json.dump(self.leaderboard, f)
 
         pygame.quit()

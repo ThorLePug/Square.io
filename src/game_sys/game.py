@@ -1,11 +1,11 @@
 import pygame
 from pygame.locals import *
-from src.game_sys.entities.player import Player
-from src.game_sys.entities.enemy import Enemy, EnemyShooter, SpiralShooter
-from src.game_sys.walls import load_map, create_map
-from src.utils.crosshair import Crosshair
-from src.utils.animations import Fader
-from src.utils.text_system import TextSurf
+from .entities.player import Player
+from .entities.enemy import Enemy, EnemyShooter, SpiralShooter
+from .walls import load_map, create_map
+from ..utils.crosshair import Crosshair
+from ..utils.animations import Fader
+from ..utils.text_system import TextSurf
 
 
 class Game:
@@ -25,11 +25,11 @@ class Game:
         self.wave = 0
         self.name = ''
 
-        self.game_music = pygame.mixer.Sound('./sound/game_music.wav')
-        self.level_up = pygame.mixer.Sound('./sound/level_up.wav')
-        self.player_hit = pygame.mixer.Sound('./sound/player_hit.wav')
-        self.shooting = pygame.mixer.Sound('./sound/shooting.wav')
-        self.game_over_img = pygame.image.load('./img/game_over.png')
+        self.game_music = pygame.mixer.Sound('../sound/game_music.wav')
+        self.level_up = pygame.mixer.Sound('../sound/level_up.wav')
+        self.player_hit = pygame.mixer.Sound('../sound/player_hit.wav')
+        self.shooting = pygame.mixer.Sound('../sound/shooting.wav')
+        self.game_over_img = pygame.image.load('../img/game_over.png')
 
         self.press_k_surf = TextSurf('Press SPACE to continue', self.software.text_font, 640, 480)
         self.score_surf = None

@@ -4,8 +4,8 @@ This module defines the Player class:
  - Controllable
 """
 import pygame
-from src.game_sys.entities.mixins import ShooterMixin
-from src.game_sys.entities.entity import Entity, Shield
+from .mixins import ShooterMixin
+from .entity import Entity, Shield
 
 
 # --------------------- PLAYER CLASS -------------------------- #

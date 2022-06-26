@@ -1,8 +1,8 @@
 import pygame
 import math
 from random import randint
-from src.game_sys.entities.entity import Entity
-from src.game_sys.entities.mixins import ShooterMixin
+from .entity import Entity
+from .mixins import ShooterMixin
 
 # --------------------- ENEMY CLASSES -------------------------- #
 

@@ -1,10 +1,10 @@
 import pygame
 from typing import Callable
-from src.utils.text_system import Font, TextSurf
+from utils.text_system import Font, TextSurf
 
 pygame.mixer.init()
 
-select_sound = pygame.mixer.Sound('./sound/button_select.wav')
+select_sound = pygame.mixer.Sound('../sound/button_select.wav')
 
 
 def do_nothing():

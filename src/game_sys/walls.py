@@ -2,7 +2,7 @@ import pygame
 
 
 def load_map() -> list:
-    f = open('./maps/map.txt', 'r')
+    f = open('../maps/map.txt', 'r')
     data = f.read()
     f.close()
     game_data = []
