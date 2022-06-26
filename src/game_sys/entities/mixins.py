@@ -13,7 +13,7 @@ class ShooterMixin:
         self.reload_time = reload_time
         self.total_reload_time = self.reload_time
         self.delta_time = delta_time
-        self.shoot_fx = pygame.mixer.Sound('../sound/shooting.wav')
+        self.shoot_fx = pygame.mixer.Sound('sound/shooting.wav')
         self.sound = sound
 
     def shoot(self, position, target_x, target_y, surface):
