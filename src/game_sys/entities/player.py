@@ -13,7 +13,7 @@ from .entity import Entity, Shield
 
 class Player(ShooterMixin, Entity):
     def __init__(self, surface, delta_fps):
-        Entity.__init__(self, width=48, height=48, pos_x=90, pos_y=90,
+        Entity.__init__(self, width=44, height=44, pos_x=90, pos_y=90,
                         speed=4, colour=(0, 0, 255), surface=surface, delta_fps=delta_fps, health=50)
         ShooterMixin.__init__(self, reload_time=10, delta_time=delta_fps, sound=True)
 
