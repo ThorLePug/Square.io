@@ -1,5 +1,5 @@
 import pygame
-from window import GameWindow
+from src.window import GameWindow
 
 if __name__ == '__main__':
     pygame.init()

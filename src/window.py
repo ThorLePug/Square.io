@@ -2,10 +2,10 @@ import pygame
 from pygame.locals import *
 import sys
 import json
-from game_sys.game import Game
-from menu import Menu
-from menu import Button
-from utils.text_system import Font, TextSurf
+from .game_sys.game import Game
+from .menu import Menu
+from .menu import Button
+from .utils.text_system import Font, TextSurf
 
 # --------------------------------------------
 

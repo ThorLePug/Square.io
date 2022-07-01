@@ -1,6 +1,6 @@
 import pygame
 from typing import Callable
-from utils.text_system import Font, TextSurf
+from .utils.text_system import Font, TextSurf
 
 pygame.mixer.init()
 

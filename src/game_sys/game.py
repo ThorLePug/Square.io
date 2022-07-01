@@ -3,9 +3,9 @@ from pygame.locals import *
 from .entities.player import Player
 from .entities.enemy import Enemy, EnemyShooter, SpiralShooter
 from .walls import load_map, create_map
-from utils.crosshair import Crosshair
-from utils.animations import Fader
-from utils.text_system import TextSurf
+from ..utils.crosshair import Crosshair
+from ..utils.animations import Fader
+from ..utils.text_system import TextSurf
 
 
 class Game:
