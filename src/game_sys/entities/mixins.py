@@ -6,7 +6,7 @@ import pygame
 # Superclass for all shooting entities
 
 
-class ShooterMixin:
+class _Shooter:
     def __init__(self, reload_time, delta_time, sound = False):
 
         self.bullets = []
@@ -34,3 +34,7 @@ class ShooterMixin:
 
     def update(self):
         self.reload()
+
+
+class _Shielded:
+    ...

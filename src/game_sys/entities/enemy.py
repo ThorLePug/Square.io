@@ -2,7 +2,7 @@ import pygame
 import math
 from random import randint
 from .entity import Entity
-from .mixins import ShooterMixin
+from .mixins import _Shooter
 
 # --------------------- ENEMY CLASSES -------------------------- #
 
@@ -39,16 +39,16 @@ class Enemy(Entity):
         return x, y
 
 
-class EnemyShooter(Enemy, ShooterMixin):
+class EnemyShooter(Enemy, _Shooter):
     def __init__(self, window_width, window_height, all_sprites, walls, surface, delta_fps, colour=(0, 255, 255),
                  reload_time=180, width=30, height=30):
         Enemy.__init__(self, width=width, height=height, window_width=window_width, window_height=window_height,
                        all_sprites=all_sprites, walls=walls, surface=surface, colour=colour, delta_fps=delta_fps)
-        ShooterMixin.__init__(self, reload_time=reload_time, delta_time=delta_fps)
+        _Shooter.__init__(self, reload_time=reload_time, delta_time=delta_fps)
 
     def update(self):
         Entity.update(self)
-        ShooterMixin.update(self)
+        _Shooter.update(self)
         for bullet in self.bullets:
             bullet.update()
             self.surface.blit(bullet.image, bullet.rect.center)
