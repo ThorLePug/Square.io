@@ -10,10 +10,6 @@ from .utils.text_system import Font, TextSurf
 # --------------------------------------------
 
 
-def get_score(elem) -> int:
-    return elem.get('Score')
-
-
 class GameWindow:
     def __init__(self) -> None:
 
@@ -107,7 +103,7 @@ class GameWindow:
     def go_leaderboard(self) -> None:  # Method to set up leaderboard UI
         menu_button2 = Button(self.WINDOW_WIDTH, self.title_font, self.go_menu, 600, 'Return')
         lead_surf = TextSurf('LEADERBOARD', self.title_font, self.WINDOW_WIDTH, 50)
-        self.leaderboard.sort(key=get_score, reverse=True)
+        self.leaderboard.sort(key=lambda elem: elem.get('Score'), reverse=True)
 
         y_offset = 0
         lead_list = [lead_surf]
