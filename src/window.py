@@ -50,9 +50,9 @@ class GameWindow:
         quit_button = Button(self.WINDOW_WIDTH, self.title_font, self.close_window, 450,
                              'QUIT')
         fps_button = Button(self.WINDOW_WIDTH, self.title_font, self.set_fps, 250,
-                            'FPS', interact=True, data_get=self.get_fps)
+                            'FPS', interact=True, data_get=lambda: self.fps)
         music_button = Button(self.WINDOW_WIDTH, self.title_font, self.set_music, 300, 'MUSIC', interact=True,
-                              data_get=self.get_music)
+                              data_get=lambda: self.music_status)
         menu_button = Button(self.WINDOW_WIDTH, self.title_font, self.go_menu, 350,
                              'Return')
 
@@ -139,15 +139,9 @@ class GameWindow:
             self.fps = 30
         self.main_menu.fps = self.fps
 
-    def get_fps(self) -> int:
-        return self.fps
-
     def set_music(self) -> None:
         self.game_music_on = abs(self.game_music_on - 1)
         self.music_status = self.STATUS[self.game_music_on]
-
-    def get_music(self) -> str:
-        return self.music_status
 
     def main(self) -> None:
         fps_clock = pygame.time.Clock()

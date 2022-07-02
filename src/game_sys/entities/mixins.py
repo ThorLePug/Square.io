@@ -34,6 +34,9 @@ class _CanShoot:
 
     def update(self):
         self.reload()
+        for bullet in self.bullets:
+            bullet.update()
+            bullet.surface.blit(bullet.image, bullet.rect.center)
 
 
 class _PowerUp:

@@ -26,10 +26,6 @@ class Player(Entity, _CanShoot, _CanShield):
         _CanShoot.update(self)
         _CanShield.update(self, self.position, self.surface)
 
-        for bullet in self.bullets:
-            bullet.update()
-            self.surface.blit(bullet.image, bullet.rect.center)
-
     def move_back(self):
         self.position = self.old_position
         Entity.update(self)

@@ -53,7 +53,7 @@ class Game:
         self.mouse_x = 0
         self.mouse_y = 0
 
-        self.enemy_num = 1
+        self.enemy_num = 0
         self.enemy_shooter_targeting_num = -4
         self.spiral_enemy_shooter_num = -3
         self.enemy_group = pygame.sprite.Group()
@@ -65,7 +65,6 @@ class Game:
         self.crosshair_group = pygame.sprite.GroupSingle(self.crosshair)
 
         self.enemy_setup()
-        print(self.enemy_group.sprites())
 
     def enemy_setup(self) -> None:
 
@@ -212,12 +211,6 @@ class Game:
     def check_next_wave(self) -> None:
         if self.all_sprite_group.has(self.P1) and len(self.all_sprite_group.sprites()) == 1:
             self.enemy_setup()
-
-            """
-            boss = BossMonster(self.WINDOW.get_width(), self.WINDOW.get_height(), self.all_sprite_group, self.walls,
-                               self.WINDOW, self.delta_fps)
-            self.all_sprite_group.add(boss)
-            """
             self.wave += 1
             self.level_up.play(loops=0)
 

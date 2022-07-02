@@ -52,11 +52,7 @@ class EnemyShooter(Enemy, _CanShoot):
 
     def update(self):
         Entity.update(self)
-
         _CanShoot.update(self)
-        for bullet in self.bullets:
-            bullet.update()
-            self.surface.blit(bullet.image, bullet.rect.center)
 
 
 class SpiralShooter(EnemyShooter):
