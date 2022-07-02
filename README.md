@@ -38,7 +38,7 @@ If you have never used git, you should read this tutorial to be able to use gith
 > https://github.com/git-guides/install-git
 
 Then, go to the folder where you want to install the game and type the following command in the git bash : 
-```commandline
+```bash
 git clone https://github.com/ThorLePug/Square.io && cd Square.io
 ```
 
@@ -58,7 +58,7 @@ path/to/project/Square.io:
 python main.py 
 ```
 - Linux
-```commandline
+```bash
 python3 main.py 
 ```
 

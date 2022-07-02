@@ -117,7 +117,7 @@ class Game:
                 self.P1.move('up', self.P1.speed)
 
             if k_pressed[K_SPACE]:
-                self.P1.get_shield()
+                self.P1.activate_shield(self.P1.position)
 
             # Mouse Input
             mouse_click = pygame.mouse.get_pressed(num_buttons=3)
@@ -180,12 +180,12 @@ class Game:
                 if self.P1.health <= 0:
                     self.P1.is_killed = True
                     self.P1.disappear()
-            if self.P1.has_shield:
+            if self.P1._has_shield:
                 for bullet in enemy.bullets:
                     if pygame.sprite.collide_circle(self.P1.shield, bullet):
                         enemy.bullets.remove(bullet)
             for bullet in enemy.bullets:
-                if bullet.rect.collidelist(self.walls) > -1:
+                if bullet.s_rect.collidelist(self.walls) > -1:
                     enemy.bullets.remove(bullet)
 
         # Enemy/Bullet kills player
@@ -236,7 +236,6 @@ class Game:
 
             self.all_sprite_group.update()
             self.check_collision()
-            self.P1.power_up.draw(self.WINDOW)
 
             # Handle Rendering
             self.all_sprite_group.draw(self.WINDOW)

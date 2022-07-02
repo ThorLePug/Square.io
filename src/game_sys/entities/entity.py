@@ -5,14 +5,10 @@ import math
 class Entity(pygame.sprite.Sprite):
     def __init__(self, width, height, pos_x, pos_y, speed, colour, surface, delta_fps, health):
         super().__init__()
-        self.width = width
-        self.height = height
-
         self.image = pygame.Surface((width, height))
         self.image.fill(pygame.Color(colour))
 
         self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
 
         self.position = [pos_x, pos_y]
         self.rect.center = self.position
@@ -44,8 +40,8 @@ class Entity(pygame.sprite.Sprite):
 
     def disappear(self):
         if self.scale > 0:
-            self.image = pygame.transform.scale(self.image, (int(self.width * self.scale),
-                                                             int(self.height * self.scale)))
+            self.image = pygame.transform.scale(self.image, (int(self.rect.width * self.scale),
+                                                             int(self.rect.height * self.scale)))
             self.rect = self.image.get_rect()
             self.rect.center = self.position
             self.scale -= 0.05 * self.delta_fps
@@ -75,26 +71,3 @@ class Bullet(Entity):
         self.position[0] += self.dx
         self.position[1] += self.dy
         self.rect.center = self.position
-
-# --------------------- SHIELD CLASS -------------------------- #
-# Basic shield class for Player
-
-
-class Shield(pygame.sprite.Sprite):
-    def __init__(self, position: list, timer = 60*60):
-        super().__init__()
-        self.radius = 50
-        self.final_radius = 50
-        self.position = position
-
-        self.image = pygame.Surface((10 * self.radius, 10 * self.radius), pygame.SRCALPHA)
-        self.rect = self.image.get_rect()
-        pygame.draw.circle(self.image, (0, 0, 255), self.rect.center,
-                           self.radius, width = 1)
-
-        self.time_active = timer
-
-    def update(self, p_position):
-        self.position = p_position
-        self.rect.center = self.position
-

@@ -3,56 +3,28 @@ This module defines the Player class:
  - Parent class is Sprite.Entity
  - Controllable
 """
-import pygame
-from .mixins import _Shooter
-from .entity import Entity, Shield
+from .mixins import _CanShoot, _CanShield
+from .entity import Entity
 
 
 # --------------------- PLAYER CLASS -------------------------- #
 
-class Player(_Shooter, Entity):
+class Player(Entity, _CanShoot, _CanShield):
     def __init__(self, surface, delta_fps):
         Entity.__init__(self, width=44, height=44, pos_x=90, pos_y=90,
                         speed=4, colour=(0, 0, 255), surface=surface, delta_fps=delta_fps, health=50)
-        _Shooter.__init__(self, reload_time=10, delta_time=delta_fps, sound=True)
-
-        self.shield = None
-        self.power_up = pygame.sprite.Group()
-
-        self.has_shield = False
-        self.shield_timer = 60 * 5
-        self.shield_cooldown = 60 * 10
-        self.shield_time_left = self.shield_timer
+        _CanShoot.__init__(self, reload_time=10, delta_time=delta_fps, sound=True)
+        _CanShield.__init__(self)
 
         self.old_position = self.position.copy()
 
     def save_position(self):
         self.old_position = self.position.copy()
 
-    def get_shield(self):
-        if not self.has_shield and self.shield_cooldown == 0:
-            self.has_shield = True
-            self.shield = Shield(self.position)
-            self.power_up.add(self.shield)
-
-    def check_power_up(self):
-        self.power_up.update(self.position)
-        self.power_up.draw(self.surface)
-        if self.has_shield:
-            if self.shield_time_left > 0:
-                self.shield_time_left -= 1
-            else:
-                self.shield.kill()
-                self.has_shield = False
-                self.shield_time_left = self.shield_timer
-        elif self.shield_cooldown > 0:
-            self.shield_cooldown -= 1
-
     def update(self):
-        self.check_power_up()
-
         Entity.update(self)
-        _Shooter.update(self)
+        _CanShoot.update(self)
+        _CanShield.update(self, self.position, self.surface)
 
         for bullet in self.bullets:
             bullet.update()
@@ -64,6 +36,5 @@ class Player(_Shooter, Entity):
 
     def disappear(self):
         Entity.disappear(self)
-        self.power_up.empty()
 
 # Entity Inheritance --> modified movement + update overload

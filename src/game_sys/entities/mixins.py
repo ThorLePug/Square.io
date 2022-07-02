@@ -3,10 +3,10 @@ import pygame
 
 # --------------------- MIXIN CLASSES -------------------------- #
 
-# Superclass for all shooting entities
+# Parent class for all shooting entities
 
 
-class _Shooter:
+class _CanShoot:
     def __init__(self, reload_time, delta_time, sound = False):
 
         self.bullets = []
@@ -36,5 +36,47 @@ class _Shooter:
         self.reload()
 
 
-class _Shielded:
-    ...
+class _PowerUp:
+    def __init__(self):
+        ...
+    # To be completed
+
+
+class Shield(pygame.sprite.Sprite):
+    def __init__(self, p_pos: tuple[int, int], radius = 50):
+        super().__init__()
+        self.image = pygame.Surface((2*radius, 2*radius), pygame.SRCALPHA)
+        self.rect = self.image.get_rect()
+        self.rect.center = list(p_pos)
+        pygame.draw.circle(self.image, (0, 0, 255), (radius, radius), radius, width=1)
+
+        self.lifespan = 60 * 5
+        self.life_left = self.lifespan
+
+    def update(self, p_position: tuple[int, int], surface: pygame.Surface):
+        if self.life_left > 0:
+            self.life_left -= 1
+        self.rect.center = p_position
+        surface.blit(self.image, self.rect)
+
+
+class _CanShield:
+    def __init__(self):
+        self._shield = None
+        self._has_shield = False
+        self.cooldown = 60 * 10
+
+    def activate_shield(self, p_position):
+        if not self._has_shield and self.cooldown == 0:
+            self._shield = Shield(p_position)
+
+    def update(self, p_position, surface):
+        if self._has_shield:
+            self._shield.update(p_position, surface)
+            if self._shield.life_left == 0:
+                self._shield = None
+                self._has_shield = False
+
+        elif self.cooldown > 0:
+            self.cooldown -= 1
+
