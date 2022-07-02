@@ -43,13 +43,13 @@ class _PowerUp:
 
 
 class Shield(pygame.sprite.Sprite):
-    def __init__(self, p_pos: tuple[int, int], radius = 50):
+    def __init__(self, p_pos: tuple[int, int], radius = 40):
         super().__init__()
+        self.radius = radius
         self.image = pygame.Surface((2*radius, 2*radius), pygame.SRCALPHA)
         self.rect = self.image.get_rect()
         self.rect.center = list(p_pos)
         pygame.draw.circle(self.image, (0, 0, 255), (radius, radius), radius, width=1)
-
         self.lifespan = 60 * 5
         self.life_left = self.lifespan
 
@@ -62,21 +62,23 @@ class Shield(pygame.sprite.Sprite):
 
 class _CanShield:
     def __init__(self):
-        self._shield = None
-        self._has_shield = False
-        self.cooldown = 60 * 10
+        self.shield = None
+        self.has_shield = False
+        self.def_cooldown = 60 * 7
+        self.cooldown = 0
 
     def activate_shield(self, p_position):
-        if not self._has_shield and self.cooldown == 0:
-            self._shield = Shield(p_position)
+        if not self.has_shield and self.cooldown == 0:
+            self.shield = Shield(p_position)
+            self.has_shield = True
 
     def update(self, p_position, surface):
-        if self._has_shield:
-            self._shield.update(p_position, surface)
-            if self._shield.life_left == 0:
-                self._shield = None
-                self._has_shield = False
+        if self.has_shield:
+            self.shield.update(p_position, surface)
+            if self.shield.life_left == 0:
+                self.shield = None
+                self.has_shield = False
+                self.cooldown = self.def_cooldown
 
         elif self.cooldown > 0:
             self.cooldown -= 1
-

@@ -12,7 +12,7 @@ class Game:
     def __init__(self, window) -> None:
         self.software = window
         self.WINDOW = window.WINDOW
-        self.delta_fps = 60/window.fps
+        self.delta_fps = 60 / window.fps
         self.running = True
         self.awaiting_name = True
         self.changing_level = False
@@ -53,7 +53,7 @@ class Game:
         self.mouse_x = 0
         self.mouse_y = 0
 
-        self.enemy_num = 0
+        self.enemy_num = 1
         self.enemy_shooter_targeting_num = -4
         self.spiral_enemy_shooter_num = -3
         self.enemy_group = pygame.sprite.Group()
@@ -65,18 +65,25 @@ class Game:
         self.crosshair_group = pygame.sprite.GroupSingle(self.crosshair)
 
         self.enemy_setup()
+        print(self.enemy_group.sprites())
 
     def enemy_setup(self) -> None:
 
         for x in range(self.enemy_num):
-            enemy = Enemy(self.WINDOW.get_width(), self.WINDOW.get_height(), self.all_sprite_group, self.walls,
-                          self.WINDOW, self.delta_fps)
+            enemy = Enemy.spawn(*self.WINDOW.get_size(),
+                                all_sprites=self.all_sprite_group,
+                                walls=self.walls,
+                                surface=self.WINDOW,
+                                delta_fps=self.delta_fps)
             self.enemy_group.add(enemy)
             self.all_sprite_group.add(enemy)
 
         for y in range(self.enemy_shooter_targeting_num):
-            enemy_shooter = EnemyShooter(self.WINDOW.get_width(), self.WINDOW.get_height(), self.all_sprite_group,
-                                         self.walls, self.WINDOW, self.delta_fps)
+            enemy_shooter = EnemyShooter.spawn(*self.WINDOW.get_size(),
+                                               all_sprites=self.all_sprite_group,
+                                               walls=self.walls,
+                                               surface=self.WINDOW,
+                                               delta_fps=self.delta_fps)
             self.enemy_group.add(enemy_shooter)
             self.all_sprite_group.add(enemy_shooter)
             self.shooting_targeting_enemies.add(enemy_shooter)
@@ -85,9 +92,11 @@ class Game:
             self.all_bullets.add()
 
         for z in range(self.spiral_enemy_shooter_num):
-            spiral_enemy_shooter = \
-                SpiralShooter(self.WINDOW.get_width(), self.WINDOW.get_height(), self.all_sprite_group, self.walls,
-                              self.WINDOW, self.delta_fps)
+            spiral_enemy_shooter = SpiralShooter.spawn(*self.WINDOW.get_size(),
+                                                       all_sprites=self.all_sprite_group,
+                                                       walls=self.walls,
+                                                       surface=self.WINDOW,
+                                                       delta_fps=self.delta_fps)
             self.enemy_group.add(spiral_enemy_shooter)
             self.all_sprite_group.add(spiral_enemy_shooter)
             self.non_targeting_enemies.add(spiral_enemy_shooter)
@@ -126,7 +135,7 @@ class Game:
                 self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
                 self.P1.shoot(self.P1.position, self.mouse_x, self.mouse_y, self.WINDOW)
 
-        elif self.fader.alpha >= 255:   # Way to check if 0.5 sec has passed to avoid straight menu bar
+        elif self.fader.alpha >= 255:  # Way to check if 0.5 sec has passed to avoid straight menu bar
             if k_pressed[K_SPACE]:
                 self.running = False
 
@@ -180,12 +189,12 @@ class Game:
                 if self.P1.health <= 0:
                     self.P1.is_killed = True
                     self.P1.disappear()
-            if self.P1._has_shield:
+            if self.P1.has_shield:
                 for bullet in enemy.bullets:
                     if pygame.sprite.collide_circle(self.P1.shield, bullet):
                         enemy.bullets.remove(bullet)
             for bullet in enemy.bullets:
-                if bullet.s_rect.collidelist(self.walls) > -1:
+                if bullet.rect.collidelist(self.walls) > -1:
                     enemy.bullets.remove(bullet)
 
         # Enemy/Bullet kills player
