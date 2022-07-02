@@ -2,4 +2,4 @@
 log.txt
 /.idea/*
 __pycache__/
-/data/leaderboard.json
+data/leaderboard.json
