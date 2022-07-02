@@ -44,8 +44,6 @@ class Enemy(Entity):
 
 
 class EnemyShooter(Enemy, _CanShoot):
-    width = 30
-    height = 30
     colour = (0, 255, 255)
 
     def __init__(self, surface, delta_fps, x, y, reload_time=180):
@@ -62,8 +60,6 @@ class EnemyShooter(Enemy, _CanShoot):
 
 
 class SpiralShooter(EnemyShooter):
-    width = 30
-    height = 30
     colour = (100, 100, 0)
 
     def __init__(self, surface, delta_fps, x, y):
