@@ -166,6 +166,7 @@ class Game:
                     case SpiralShooter() as enemy:
                         enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
                     case EnemyShooter() as enemy:
+                        enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
 
     def check_collision(self) -> None:
         # Bullets kill Player
