@@ -10,9 +10,14 @@ from .entity import Entity
 # --------------------- PLAYER CLASS -------------------------- #
 
 class Player(Entity, _CanShoot, _CanShield):
+    width = 44
+    height = 44
+    colour = (0, 0, 255)
+    speed = 4
+    health = 60
+
     def __init__(self, surface, delta_fps):
-        Entity.__init__(self, width=44, height=44, pos_x=90, pos_y=90,
-                        speed=4, colour=(0, 0, 255), surface=surface, delta_fps=delta_fps, health=50)
+        Entity.__init__(self, pos_x=90, pos_y=90, surface=surface, delta_fps=delta_fps)
         _CanShoot.__init__(self, reload_time=10, delta_time=delta_fps, sound=True)
         _CanShield.__init__(self)
 

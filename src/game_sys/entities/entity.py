@@ -3,19 +3,25 @@ import math
 
 
 class Entity(pygame.sprite.Sprite):
-    def __init__(self, width, height, pos_x, pos_y, speed, colour, surface, delta_fps, health):
+    width = 20
+    height = 20
+    speed = 2
+    colour = (0, 0, 0)
+    health = 10
+
+    def __init__(self, pos_x, pos_y, surface, delta_fps):
         super().__init__()
-        self.image = pygame.Surface((width, height))
-        self.image.fill(pygame.Color(colour))
+        self.image = pygame.Surface((self.__class__.width, self.__class__.height))
+        self.image.fill(pygame.Color(self.__class__.colour))
 
         self.rect = self.image.get_rect()
 
         self.position = [pos_x, pos_y]
         self.rect.center = self.position
-        self.speed = speed * delta_fps
+        self.speed = self.__class__.speed * delta_fps
         self.delta_fps = delta_fps
 
-        self.health = health
+        self.health = self.__class__.health
         self.total_health = self.health
 
         self.scale = 1.0
@@ -54,9 +60,14 @@ class Entity(pygame.sprite.Sprite):
 
 
 class Bullet(Entity):
+    width = 8
+    height = 8
+    speed = 8
+    colour = (255, 0, 0)
+    health = 1
+
     def __init__(self, pos_x, pos_y, target_x, target_y, surface, delta_fps=1):
-        Entity.__init__(self, width=8, height=8, pos_x=pos_x, pos_y=pos_y,
-                        speed=8, colour=(255, 0, 0), surface=surface, delta_fps=delta_fps, health=1)
+        Entity.__init__(self, pos_x=pos_x, pos_y=pos_y, surface=surface, delta_fps=delta_fps)
 
         self.initial_pos = [pos_x, pos_y]
 

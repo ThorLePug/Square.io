@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from .entities.player import Player
-from .entities.enemy import Enemy, EnemyShooter, SpiralShooter
+from .entities.enemy import Enemy, EnemyShooter, SpiralShooter, Boss1
 from .walls import load_map, create_map
 from ..utils.crosshair import Crosshair
 from ..utils.animations import Fader
@@ -53,18 +53,22 @@ class Game:
         self.mouse_x = 0
         self.mouse_y = 0
 
-        self.enemy_num = 0
-        self.enemy_shooter_targeting_num = -4
-        self.spiral_enemy_shooter_num = -3
+        self.enemy_num = -10
+        self.enemy_shooter_targeting_num = -10
+        self.spiral_enemy_shooter_num = -10
         self.enemy_group = pygame.sprite.Group()
-        self.shooting_enemies = pygame.sprite.Group()
-        self.shooting_targeting_enemies = pygame.sprite.Group()
-        self.non_targeting_enemies = pygame.sprite.Group()
 
         self.crosshair = Crosshair()
         self.crosshair_group = pygame.sprite.GroupSingle(self.crosshair)
 
-        self.enemy_setup()
+        boss1 = Boss1.spawn(*self.WINDOW.get_size(), self.all_sprite_group,
+                            walls=self.walls,
+                            surface=self.WINDOW,
+                            delta_fps=self.delta_fps)
+        self.enemy_group.add(boss1)
+        self.all_sprite_group.add(boss1)
+
+        # self.enemy_setup()
 
     def enemy_setup(self) -> None:
 
@@ -85,10 +89,6 @@ class Game:
                                                delta_fps=self.delta_fps)
             self.enemy_group.add(enemy_shooter)
             self.all_sprite_group.add(enemy_shooter)
-            self.shooting_targeting_enemies.add(enemy_shooter)
-
-            self.shooting_enemies.add(enemy_shooter)
-            self.all_bullets.add()
 
         for z in range(self.spiral_enemy_shooter_num):
             spiral_enemy_shooter = SpiralShooter.spawn(*self.WINDOW.get_size(),
@@ -98,9 +98,7 @@ class Game:
                                                        delta_fps=self.delta_fps)
             self.enemy_group.add(spiral_enemy_shooter)
             self.all_sprite_group.add(spiral_enemy_shooter)
-            self.non_targeting_enemies.add(spiral_enemy_shooter)
 
-            self.shooting_enemies.add(spiral_enemy_shooter)
         self.enemy_num += 1
         self.enemy_shooter_targeting_num += 1
         self.spiral_enemy_shooter_num += 1
@@ -163,10 +161,20 @@ class Game:
 
     def enemy_control(self) -> None:
         if not self.P1.is_killed:
-            for enemy in self.shooting_targeting_enemies.sprites():
-                enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
-            for enemy in self.non_targeting_enemies.sprites():
-                enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
+            for enemy in self.enemy_group.sprites():
+                match enemy:
+                    case SpiralShooter() as enemy:
+                        enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
+                    case EnemyShooter() as enemy:
+                        enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
+
+
+
+            #for enemy in self.shooting_targeting_enemies.sprites():
+               # print(enemy.__class__)
+            #    enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
+            #for enemy in self.non_targeting_enemies.sprites():
+               # enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
 
     def check_collision(self) -> None:
         for enemy in self.enemy_group.sprites():
@@ -179,22 +187,23 @@ class Game:
                 self.P1.bullets.pop(collided)
 
         # Bullets kill Player
-        for enemy in self.shooting_enemies.sprites():
-            collided = self.P1.rect.collidelist(enemy.bullets)
-            if collided > -1:
-                self.P1.health -= 30
-                self.player_hit.play()
-                enemy.bullets.pop(collided)
-                if self.P1.health <= 0:
-                    self.P1.is_killed = True
-                    self.P1.disappear()
-            if self.P1.has_shield:
+        for enemy in self.enemy_group.sprites():
+            if isinstance(enemy, EnemyShooter):
+                collided = self.P1.rect.collidelist(enemy.bullets)
+                if collided > -1:
+                    self.P1.health -= 30
+                    self.player_hit.play()
+                    enemy.bullets.pop(collided)
+                    if self.P1.health <= 0:
+                        self.P1.is_killed = True
+                        self.P1.disappear()
+                if self.P1.has_shield:
+                    for bullet in enemy.bullets:
+                        if pygame.sprite.collide_circle(self.P1.shield, bullet):
+                            enemy.bullets.remove(bullet)
                 for bullet in enemy.bullets:
-                    if pygame.sprite.collide_circle(self.P1.shield, bullet):
+                    if bullet.rect.collidelist(self.walls) > -1:
                         enemy.bullets.remove(bullet)
-            for bullet in enemy.bullets:
-                if bullet.rect.collidelist(self.walls) > -1:
-                    enemy.bullets.remove(bullet)
 
         # Enemy/Bullet kills player
         if pygame.sprite.spritecollideany(self.P1, self.enemy_group):

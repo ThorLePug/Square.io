@@ -1,8 +1,9 @@
 import pygame
 import math
+from typing import final
 from random import randint
 from .entity import Entity
-from .mixins import _CanShoot
+from .mixins import _CanShoot, _CanShield
 
 # --------------------- ENEMY CLASSES -------------------------- #
 
@@ -11,17 +12,18 @@ class Enemy(Entity):
     height = 30
     width = 30
     colour = (255, 0, 0)
+    # speed = 2 -> Already set in Entity class
+    health = 30
 
     def __init__(self, surface, delta_fps, x, y):
-        Entity.__init__(self, width=self.__class__.width, height=self.__class__.height, pos_x=x, pos_y=y, speed=2,
-                        colour=self.__class__.colour, surface=surface, delta_fps=delta_fps, health=30)
+        Entity.__init__(self, pos_x=x, pos_y=y, surface=surface, delta_fps=delta_fps)
 
     @classmethod
     def spawn(cls, window_width, window_height, all_sprites: pygame.sprite.Group, walls: list[pygame.Rect],
-              surface, delta_fps, width=30, height=30, colour=(255, 0, 0)):
+              surface, delta_fps):
         x = randint(50, window_width - 50)
         y = randint(50, window_height - 50)
-        test_rect = pygame.Rect(x, y, width, height)
+        test_rect = pygame.Rect(x, y, cls.width, cls.height)
 
         rect_list = []
         for sprite in all_sprites:
@@ -58,8 +60,8 @@ class EnemyShooter(Enemy, _CanShoot):
 class SpiralShooter(EnemyShooter):
     colour = (100, 100, 0)
 
-    def __init__(self, surface, delta_fps, x, y):
-        EnemyShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=randint(15, 45))
+    def __init__(self, surface, delta_fps, x, y, reload_time=randint(15, 45)):
+        EnemyShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=reload_time)
 
         self.shooting_angle = 0
 
@@ -79,3 +81,26 @@ class SpiralShooter(EnemyShooter):
 
         self.target_x, self.target_y = self.target_definition()
         EnemyShooter.update(self)
+
+
+class Boss1(SpiralShooter, _CanShield):
+    width = 50
+    height = 50
+    colour = (255, 255, 255)
+    health = 150
+
+    def __init__(self, surface, delta_fps, x, y):
+        SpiralShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=1)
+        _CanShield.__init__(self)
+
+    @classmethod
+    def spawn(cls, window_width, window_height, all_sprites: pygame.sprite.Group, walls: list[pygame.Rect],
+              surface, delta_fps):
+        x = window_width/2
+        y = window_height/2
+        return cls(surface, delta_fps, x, y)
+
+    def update(self):
+        super().update()
+
+        self.activate_shield(self.position)

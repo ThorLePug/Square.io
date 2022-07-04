@@ -176,5 +176,4 @@ class GameWindow:
             json.dump(self.leaderboard, f)
 
         pygame.quit()
-        f.close()
         sys.exit(0)
