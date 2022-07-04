@@ -1,9 +1,9 @@
 import pygame
 import math
-from typing import final
 from random import randint
 from .entity import Entity
 from .mixins import _CanShoot, _CanShield
+
 
 # --------------------- ENEMY CLASSES -------------------------- #
 
@@ -90,7 +90,7 @@ class Boss1(SpiralShooter, _CanShield):
     health = 150
 
     def __init__(self, surface, delta_fps, x, y):
-        SpiralShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=1)
+        SpiralShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=3)
         _CanShield.__init__(self)
 
     @classmethod

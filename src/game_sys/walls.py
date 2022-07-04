@@ -1,4 +1,5 @@
 import pygame
+from dataclasses import dataclass
 
 
 def load_map() -> list:
@@ -54,13 +55,16 @@ class TPBlock(Block):
         super().__init__(x, y, id_block)
         self.map_target = 1
 
+
 # BEING BUILT --------------------------------------------- #
 
 
 class Map:
-    def __init__(self, path):
+    def __init__(self):
         self.walls = []
+        self.portals = []
 
 
-
-
+@dataclass()
+class Portal:
+    pass

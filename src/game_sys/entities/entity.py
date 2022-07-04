@@ -11,17 +11,17 @@ class Entity(pygame.sprite.Sprite):
 
     def __init__(self, pos_x, pos_y, surface, delta_fps):
         super().__init__()
-        self.image = pygame.Surface((self.__class__.width, self.__class__.height))
-        self.image.fill(pygame.Color(self.__class__.colour))
+        self.image = pygame.Surface((self.width, self.height))
+        self.image.fill(pygame.Color(self.colour))
 
         self.rect = self.image.get_rect()
 
         self.position = [pos_x, pos_y]
         self.rect.center = self.position
-        self.speed = self.__class__.speed * delta_fps
+        self.speed = self.speed * delta_fps
         self.delta_fps = delta_fps
 
-        self.health = self.__class__.health
+        self.health = self.health
         self.total_health = self.health
 
         self.scale = 1.0

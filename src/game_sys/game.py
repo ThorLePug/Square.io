@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from .entities.player import Player
-from .entities.enemy import Enemy, EnemyShooter, SpiralShooter, Boss1
+from .entities.enemy import Enemy, EnemyShooter, SpiralShooter  # , Boss1
 from .walls import load_map, create_map
 from ..utils.crosshair import Crosshair
 from ..utils.animations import Fader
@@ -53,66 +53,32 @@ class Game:
         self.mouse_x = 0
         self.mouse_y = 0
 
-        self.enemy_num = -10
-        self.enemy_shooter_targeting_num = -10
-        self.spiral_enemy_shooter_num = -10
+        self.enemies = [[Enemy, 0], [EnemyShooter, -4], [SpiralShooter, -2]]
         self.enemy_group = pygame.sprite.Group()
 
         self.crosshair = Crosshair()
         self.crosshair_group = pygame.sprite.GroupSingle(self.crosshair)
 
-        boss1 = Boss1.spawn(*self.WINDOW.get_size(), self.all_sprite_group,
-                            walls=self.walls,
-                            surface=self.WINDOW,
-                            delta_fps=self.delta_fps)
-        self.enemy_group.add(boss1)
-        self.all_sprite_group.add(boss1)
-
-        # self.enemy_setup()
+        self.enemy_setup()
 
     def enemy_setup(self) -> None:
+        for enemy_type in self.enemies:
+            for n in range(enemy_type[1]):
+                enemy = enemy_type[0].spawn(*self.WINDOW.get_size(),
+                                            all_sprites=self.all_sprite_group,
+                                            walls=self.walls,
+                                            surface=self.WINDOW,
+                                            delta_fps=self.delta_fps)
+                self.enemy_group.add(enemy)
+                self.all_sprite_group.add(enemy)
 
-        for x in range(self.enemy_num):
-            enemy = Enemy.spawn(*self.WINDOW.get_size(),
-                                all_sprites=self.all_sprite_group,
-                                walls=self.walls,
-                                surface=self.WINDOW,
-                                delta_fps=self.delta_fps)
-            self.enemy_group.add(enemy)
-            self.all_sprite_group.add(enemy)
-
-        for y in range(self.enemy_shooter_targeting_num):
-            enemy_shooter = EnemyShooter.spawn(*self.WINDOW.get_size(),
-                                               all_sprites=self.all_sprite_group,
-                                               walls=self.walls,
-                                               surface=self.WINDOW,
-                                               delta_fps=self.delta_fps)
-            self.enemy_group.add(enemy_shooter)
-            self.all_sprite_group.add(enemy_shooter)
-
-        for z in range(self.spiral_enemy_shooter_num):
-            spiral_enemy_shooter = SpiralShooter.spawn(*self.WINDOW.get_size(),
-                                                       all_sprites=self.all_sprite_group,
-                                                       walls=self.walls,
-                                                       surface=self.WINDOW,
-                                                       delta_fps=self.delta_fps)
-            self.enemy_group.add(spiral_enemy_shooter)
-            self.all_sprite_group.add(spiral_enemy_shooter)
-
-        self.enemy_num += 1
-        self.enemy_shooter_targeting_num += 1
-        self.spiral_enemy_shooter_num += 1
+            enemy_type[1] += 1
 
     def handle_input(self) -> None:
         k_pressed = pygame.key.get_pressed()
 
         if not self.P1.is_killed:
             # Keyboard input
-            '''
-            for character in CHARACTERS:
-                if k_pressed[pygame.key.key_code(character)]:
-                    print(character)
-            '''
             if k_pressed[K_RIGHT]:
                 self.P1.move('right', self.P1.speed)
             elif k_pressed[K_LEFT]:
@@ -132,7 +98,7 @@ class Game:
                 self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
                 self.P1.shoot(self.P1.position, self.mouse_x, self.mouse_y, self.WINDOW)
 
-        elif self.fader.alpha >= 255:  # Way to check if 0.5 sec has passed to avoid straight menu bar
+        elif self.fader.alpha >= 255:  # Way to check if x sec has passed to avoid straight menu bar
             if k_pressed[K_SPACE]:
                 self.running = False
 
@@ -169,7 +135,6 @@ class Game:
                         enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
 
     def check_collision(self) -> None:
-        # Bullets kill Player
         for enemy in self.enemy_group.sprites():
             if isinstance(enemy, Enemy):
                 collided = enemy.rect.collidelist(self.P1.bullets)
@@ -271,6 +236,6 @@ class Game:
         self.crosshair_group.update(mouse_pos_x, mouse_pos_y)
         self.crosshair_group.draw(self.WINDOW)
 
-    def get_data(self):
+    def get_data(self) -> dict:
         data_dict = {'Name': self.name, 'Score': self.score}
         return data_dict
