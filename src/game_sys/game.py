@@ -166,28 +166,18 @@ class Game:
                     case SpiralShooter() as enemy:
                         enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
                     case EnemyShooter() as enemy:
-                        enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
-
-
-
-            #for enemy in self.shooting_targeting_enemies.sprites():
-               # print(enemy.__class__)
-            #    enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
-            #for enemy in self.non_targeting_enemies.sprites():
-               # enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
 
     def check_collision(self) -> None:
-        for enemy in self.enemy_group.sprites():
-            collided = enemy.rect.collidelist(self.P1.bullets)
-            if collided > -1 and not enemy.is_killed:
-                enemy.health -= 30
-                if enemy.health <= 0:
-                    enemy.is_killed = True
-                    self.score += 1
-                self.P1.bullets.pop(collided)
-
         # Bullets kill Player
         for enemy in self.enemy_group.sprites():
+            if isinstance(enemy, Enemy):
+                collided = enemy.rect.collidelist(self.P1.bullets)
+                if collided > -1 and not enemy.is_killed:
+                    enemy.health -= 30
+                    if enemy.health <= 0:
+                        enemy.is_killed = True
+                        self.score += 1
+                    self.P1.bullets.pop(collided)
             if isinstance(enemy, EnemyShooter):
                 collided = self.P1.rect.collidelist(enemy.bullets)
                 if collided > -1:
