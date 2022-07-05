@@ -16,9 +16,6 @@ class Enemy(Entity):
     health = 30
     score = 1
 
-    def __init__(self, surface, delta_fps, x, y):
-        Entity.__init__(self, pos_x=x, pos_y=y, surface=surface, delta_fps=delta_fps)
-
     @classmethod
     def spawn(cls, window_width, window_height, all_sprites: pygame.sprite.Group, walls: list[pygame.Rect],
               surface, delta_fps):

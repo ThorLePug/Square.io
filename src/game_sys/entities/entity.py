@@ -9,14 +9,14 @@ class Entity(pygame.sprite.Sprite):
     colour = (0, 0, 0)
     health = 10
 
-    def __init__(self, pos_x, pos_y, surface, delta_fps):
+    def __init__(self, x, y, surface, delta_fps):
         super().__init__()
         self.image = pygame.Surface((self.width, self.height))
-        self.image.fill(pygame.Color(self.colour))
+        self.image.fill(self.colour)
 
         self.rect = self.image.get_rect()
 
-        self.position = [pos_x, pos_y]
+        self.position = [x, y]
         self.rect.center = self.position
         self.speed = self.speed * delta_fps
         self.delta_fps = delta_fps
@@ -68,10 +68,10 @@ class Bullet(Entity):
     colour = (255, 0, 0)
     health = 1
 
-    def __init__(self, pos_x, pos_y, target_x, target_y, surface, origin, delta_fps=1):
-        Entity.__init__(self, pos_x=pos_x, pos_y=pos_y, surface=surface, delta_fps=delta_fps)
+    def __init__(self, x, y, target_x, target_y, surface, origin, delta_fps=1):
+        Entity.__init__(self, x=x, y=y, surface=surface, delta_fps=delta_fps)
 
-        self.initial_pos = [pos_x, pos_y]
+        self.initial_pos = [x, y]
 
         self.angle = -math.atan2(target_x - self.initial_pos[0],
                                  target_y - self.initial_pos[1]) + math.pi/2

@@ -17,7 +17,7 @@ class Player(Entity, _CanShoot, _CanShield):
     health = 60
 
     def __init__(self, surface, delta_fps):
-        Entity.__init__(self, pos_x=90, pos_y=90, surface=surface, delta_fps=delta_fps)
+        Entity.__init__(self, x=90, y=90, surface=surface, delta_fps=delta_fps)
         _CanShoot.__init__(self, reload_time=10, delta_time=delta_fps, sound=True)
         _CanShield.__init__(self)
 
