@@ -151,21 +151,6 @@ class Game:
             self.bullets.add(bullet)
 
     def check_collision(self) -> None:
-        for enemy in self.enemy_group.sprites():
-            if isinstance(enemy, Boss1):
-                if enemy.has_shield:
-                    for bullet in self.P1.bullets:
-                        if pygame.sprite.collide_circle(enemy.shield, bullet):
-                            self.P1.bullets.remove(bullet)
-            if isinstance(enemy, EnemyShooter):
-                if self.P1.has_shield:
-                    for bullet in enemy.bullets:
-                        if pygame.sprite.collide_circle(self.P1.shield, bullet):
-                            enemy.bullets.remove(bullet)
-                for bullet in enemy.bullets:
-                    if bullet.rect.collidelist(self.walls) > -1:
-                        enemy.bullets.remove(bullet)
-
         # Enemy/Bullet kills player
         if pygame.sprite.spritecollideany(self.P1, self.enemy_group):
             self.player_hit.play()
@@ -185,6 +170,10 @@ class Game:
                             sprite.health -= bullet.damage
                         if sprite.is_killed:
                             sprite.disappear()
+                    if isinstance(sprite, (Player, Boss1)):
+                        if sprite.has_shield:
+                            if pygame.sprite.collide_circle(bullet, sprite.shield) and bullet.origin != sprite:
+                                self.bullets.remove(bullet)
 
     def check_next_wave(self) -> None:
         if len(self.enemy_group.sprites()) == 0:
