@@ -34,8 +34,3 @@ class Player(Entity, _CanShoot, _CanShield):
     def move_back(self):
         self.position = self.old_position
         Entity.update(self)
-
-    def disappear(self):
-        Entity.disappear(self)
-
-# Entity Inheritance --> modified movement + update overload

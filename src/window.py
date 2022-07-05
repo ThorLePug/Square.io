@@ -82,7 +82,6 @@ class GameWindow:
             else:
                 self.status[item] = False
         self.game = game
-        self.game.enemy_setup()
         pygame.mouse.set_visible(False)
 
     def go_menu(self) -> None:  # Method to begin menu loop (update in loop)

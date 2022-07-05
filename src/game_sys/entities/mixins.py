@@ -39,12 +39,6 @@ class _CanShoot:
             bullet.surface.blit(bullet.image, bullet.rect.center)
 
 
-class _PowerUp:
-    def __init__(self):
-        ...
-    # To be completed
-
-
 class Shield(pygame.sprite.Sprite):
     def __init__(self, p_pos: tuple[int, int], radius = 40):
         super().__init__()
@@ -70,9 +64,9 @@ class _CanShield:
         self.def_cooldown = 60 * 7
         self.cooldown = 0
 
-    def activate_shield(self, p_position):
+    def activate_shield(self, p_position, radius = 40):
         if not self.has_shield and self.cooldown == 0:
-            self.shield = Shield(p_position)
+            self.shield = Shield(p_position, radius)
             self.has_shield = True
 
     def update(self, p_position, surface):

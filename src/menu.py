@@ -7,13 +7,9 @@ pygame.mixer.init()
 select_sound = pygame.mixer.Sound('sound/button_select.wav')
 
 
-def do_nothing():
-    return ''
-
-
 class Button(TextSurf):
-    def __init__(self, scr_width: int, font: Font, func: Callable, y, text_displayed='',
-                 interact = False, data_get = do_nothing):
+    def __init__(self, scr_width: int, font: Font, func: Callable, y: int, text_displayed='',
+                 interact = False, data_get = lambda: ''):
         self.interact = interact
         self.data_get = data_get
         send_text = text_displayed + str(self.data_get()) if not self.interact else\

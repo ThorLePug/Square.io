@@ -1,5 +1,38 @@
 import pygame
-from dataclasses import dataclass
+
+
+class Block:
+    type = ''
+    width = 16
+    height = 16
+    colour = (0, 0, 0)
+    collide = True
+
+    def __init__(self, x: int, y: int) -> None:
+        self.type = self.__class__.__name__
+        self.colour = self.colour
+        self.rect = pygame.Rect(x, y, self.width, self.height)
+
+    def __repr__(self):
+        return f'{self.type}(pos : {self.rect.center})'
+
+    def render(self, surface):
+        pygame.draw.rect(surface, self.colour, self.rect)
+
+
+class Wall(Block):
+    colour = (150, 150, 150)
+
+
+class Ground(Block):
+    colour = (0, 0, 0)
+    collide = False
+
+
+BLOCK_TYPES = {
+                1: Wall,
+                0: Ground
+              }
 
 
 def load_map() -> list:
@@ -20,7 +53,7 @@ def create_map(map_list: list):
     for row in map_list:
         map_object.append([])
         for block in row:
-            tile = Block(x_offset*16, y_offset*16, int(block))
+            tile = BLOCK_TYPES[int(block)](x_offset*16, y_offset*16)
             map_object[y_offset].append(tile)
             x_offset += 1
         y_offset += 1
@@ -28,43 +61,5 @@ def create_map(map_list: list):
     return map_object.copy()
 
 
-class Block:
-    def __init__(self, x, y, id_block: int) -> None:
-        self.block_types = {
-            0: 'air',
-            1: 'wall'
-        }
-        self.x = x
-        self.y = y
-
-        self.width = 16
-        self.height = 16
-        self.id = id_block
-        self.type = self.block_types[self.id]
-        self.colour = pygame.Color((155, 155, 155))
-        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        self.mask = pygame.mask.Mask(size=(self.width, self.height))
-
-    def render(self, surface):
-        if self.id != 0:
-            pygame.draw.rect(surface, self.colour, self.rect)
-
-
 class TPBlock(Block):
-    def __init__(self, x, y, id_block: int):
-        super().__init__(x, y, id_block)
-        self.map_target = 1
-
-
-# BEING BUILT --------------------------------------------- #
-
-
-class Map:
-    def __init__(self):
-        self.walls = []
-        self.portals = []
-
-
-@dataclass()
-class Portal:
-    pass
+    colour = (255, 0, 255)

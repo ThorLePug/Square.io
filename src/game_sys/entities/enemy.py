@@ -14,6 +14,7 @@ class Enemy(Entity):
     colour = (255, 0, 0)
     # speed = 2 -> Already set in Entity class
     health = 30
+    score = 1
 
     def __init__(self, surface, delta_fps, x, y):
         Entity.__init__(self, pos_x=x, pos_y=y, surface=surface, delta_fps=delta_fps)
@@ -47,6 +48,7 @@ class Enemy(Entity):
 
 class EnemyShooter(Enemy, _CanShoot):
     colour = (0, 255, 255)
+    score = 2
 
     def __init__(self, surface, delta_fps, x, y, reload_time=180):
         Enemy.__init__(self, x=x, y=y, surface=surface, delta_fps=delta_fps)
@@ -59,11 +61,13 @@ class EnemyShooter(Enemy, _CanShoot):
 
 class SpiralShooter(EnemyShooter):
     colour = (100, 100, 0)
+    score = 3
 
     def __init__(self, surface, delta_fps, x, y, reload_time=randint(15, 45)):
         EnemyShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=reload_time)
 
         self.shooting_angle = 0
+        self.rotate_speed = math.pi/4
 
         self.target_x, self.target_y = self.target_definition()
 
@@ -75,7 +79,7 @@ class SpiralShooter(EnemyShooter):
 
     def update(self):
         if self.shooting_angle != 2 * math.pi:
-            self.shooting_angle += math.pi/4
+            self.shooting_angle += self.rotate_speed
         else:
             self.shooting_angle = 0
 
@@ -88,10 +92,13 @@ class Boss1(SpiralShooter, _CanShield):
     height = 50
     colour = (255, 255, 255)
     health = 150
+    score = 10
 
     def __init__(self, surface, delta_fps, x, y):
         SpiralShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=3)
         _CanShield.__init__(self)
+
+        self.rotate_speed = math.pi/13
 
     @classmethod
     def spawn(cls, window_width, window_height, all_sprites: pygame.sprite.Group, walls: list[pygame.Rect],
@@ -102,5 +109,6 @@ class Boss1(SpiralShooter, _CanShield):
 
     def update(self):
         super().update()
+        _CanShield.update(self, self.position, self.surface)
 
-        self.activate_shield(self.position)
+        self.activate_shield(self.position, radius = 50)

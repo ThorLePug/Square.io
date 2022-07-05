@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 from .entities.player import Player
-from .entities.enemy import Enemy, EnemyShooter, SpiralShooter  # , Boss1
+from .entities.enemy import Enemy, EnemyShooter, SpiralShooter, Boss1
 from .walls import load_map, create_map
 from ..utils.crosshair import Crosshair
 from ..utils.animations import Fader
@@ -40,8 +40,8 @@ class Game:
         self.walls = []
         for row in self.map1_objects:
             for block in row:
-                if block.type == 'wall':
-                    self.walls.append(pygame.Rect(block.x, block.y, block.width, block.height))
+                if block.type == 'Wall':
+                    self.walls.append(pygame.Rect(*block.rect.topleft, *block.rect.size))
 
         self.P1 = Player(self.WINDOW, self.delta_fps)
         self.all_bullets = pygame.sprite.Group()
@@ -53,26 +53,35 @@ class Game:
         self.mouse_x = 0
         self.mouse_y = 0
 
-        self.enemies = [[Enemy, 0], [EnemyShooter, -4], [SpiralShooter, -2]]
+        self.enemies = [[Enemy, 1], [EnemyShooter, -4], [SpiralShooter, -2]]
         self.enemy_group = pygame.sprite.Group()
 
         self.crosshair = Crosshair()
         self.crosshair_group = pygame.sprite.GroupSingle(self.crosshair)
 
-        self.enemy_setup()
+        self.bullets = []
 
     def enemy_setup(self) -> None:
-        for enemy_type in self.enemies:
-            for n in range(enemy_type[1]):
-                enemy = enemy_type[0].spawn(*self.WINDOW.get_size(),
-                                            all_sprites=self.all_sprite_group,
-                                            walls=self.walls,
-                                            surface=self.WINDOW,
-                                            delta_fps=self.delta_fps)
-                self.enemy_group.add(enemy)
-                self.all_sprite_group.add(enemy)
+        if self.wave % 5 != 0:
+            for enemy_type in self.enemies:
+                for _ in range(enemy_type[1]):
+                    enemy = enemy_type[0].spawn(*self.WINDOW.get_size(),
+                                                all_sprites=self.all_sprite_group,
+                                                walls=self.walls,
+                                                surface=self.WINDOW,
+                                                delta_fps=self.delta_fps)
+                    self.enemy_group.add(enemy)
+                    self.all_sprite_group.add(enemy)
 
-            enemy_type[1] += 1
+                enemy_type[1] += 1
+        else:
+            boss = Boss1.spawn(*self.WINDOW.get_size(),
+                               all_sprites=self.all_sprite_group,
+                               walls=self.walls,
+                               surface=self.WINDOW,
+                               delta_fps=self.delta_fps)
+            self.all_sprite_group.add(boss)
+            self.enemy_group.add(boss)
 
     def handle_input(self) -> None:
         k_pressed = pygame.key.get_pressed()
@@ -142,8 +151,13 @@ class Game:
                     enemy.health -= 30
                     if enemy.health <= 0:
                         enemy.is_killed = True
-                        self.score += 1
+                        self.score += enemy.score
                     self.P1.bullets.pop(collided)
+            if isinstance(enemy, Boss1):
+                if enemy.has_shield:
+                    for bullet in self.P1.bullets:
+                        if pygame.sprite.collide_circle(enemy.shield, bullet):
+                            self.P1.bullets.remove(bullet)
             if isinstance(enemy, EnemyShooter):
                 collided = self.P1.rect.collidelist(enemy.bullets)
                 if collided > -1:
@@ -174,9 +188,9 @@ class Game:
                 self.P1.bullets.remove(bullet)
 
     def check_next_wave(self) -> None:
-        if self.all_sprite_group.has(self.P1) and len(self.all_sprite_group.sprites()) == 1:
-            self.enemy_setup()
+        if len(self.enemy_group.sprites()) == 0:
             self.wave += 1
+            self.enemy_setup()
             self.level_up.play(loops=0)
 
         if self.P1.is_killed:
@@ -195,6 +209,10 @@ class Game:
             # Handle input
             self.handle_input()
 
+            for row in self.map1_objects:
+                for block in row:
+                    block.render(self.WINDOW)
+
             # Control enemy movement + shooting
             self.enemy_control()
 
@@ -205,11 +223,8 @@ class Game:
             self.check_collision()
 
             # Handle Rendering
-            self.all_sprite_group.draw(self.WINDOW)
 
-            for row in self.map1_objects:
-                for block in row:
-                    block.render(self.WINDOW)
+            self.all_sprite_group.draw(self.WINDOW)
 
             if not self.P1.is_killed:
                 health_bar_rect = pygame.Rect(0, 0, 70, 7)
