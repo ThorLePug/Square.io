@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from .entities.player import Player
+from .entities.entity import Entity, Bullet
 from .entities.enemy import Enemy, EnemyShooter, SpiralShooter, Boss1
 from .walls import load_map, create_map
 from ..utils.crosshair import Crosshair
@@ -59,7 +60,7 @@ class Game:
         self.crosshair = Crosshair()
         self.crosshair_group = pygame.sprite.GroupSingle(self.crosshair)
 
-        self.bullets = []
+        self.bullets = pygame.sprite.Group()
 
     def enemy_setup(self) -> None:
         if self.wave % 5 != 0:
@@ -105,7 +106,10 @@ class Game:
 
             if mouse_click[0]:
                 self.mouse_x, self.mouse_y = pygame.mouse.get_pos()
-                self.P1.shoot(self.P1.position, self.mouse_x, self.mouse_y, self.WINDOW)
+
+                bullet = self.P1.shoot(self.P1.position, self.mouse_x, self.mouse_y, self.WINDOW)
+                if bullet is not None:
+                    self.bullets.add(bullet)
 
         elif self.fader.alpha >= 255:  # Way to check if x sec has passed to avoid straight menu bar
             if k_pressed[K_SPACE]:
@@ -135,38 +139,25 @@ class Game:
             self.name_surf.text_in = self.name_surf.text_in[:-1]
 
     def enemy_control(self) -> None:
+        bullet = None
         if not self.P1.is_killed:
             for enemy in self.enemy_group.sprites():
                 match enemy:
                     case SpiralShooter() as enemy:
-                        enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
+                        bullet = enemy.shoot(enemy.position, enemy.target_x, enemy.target_y, self.WINDOW)
                     case EnemyShooter() as enemy:
-                        enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
+                        bullet = enemy.shoot(enemy.position, self.P1.position[0], self.P1.position[1], self.WINDOW)
+        if bullet is not None:
+            self.bullets.add(bullet)
 
     def check_collision(self) -> None:
         for enemy in self.enemy_group.sprites():
-            if isinstance(enemy, Enemy):
-                collided = enemy.rect.collidelist(self.P1.bullets)
-                if collided > -1 and not enemy.is_killed:
-                    enemy.health -= 30
-                    if enemy.health <= 0:
-                        enemy.is_killed = True
-                        self.score += enemy.score
-                    self.P1.bullets.pop(collided)
             if isinstance(enemy, Boss1):
                 if enemy.has_shield:
                     for bullet in self.P1.bullets:
                         if pygame.sprite.collide_circle(enemy.shield, bullet):
                             self.P1.bullets.remove(bullet)
             if isinstance(enemy, EnemyShooter):
-                collided = self.P1.rect.collidelist(enemy.bullets)
-                if collided > -1:
-                    self.P1.health -= 30
-                    self.player_hit.play()
-                    enemy.bullets.pop(collided)
-                    if self.P1.health <= 0:
-                        self.P1.is_killed = True
-                        self.P1.disappear()
                 if self.P1.has_shield:
                     for bullet in enemy.bullets:
                         if pygame.sprite.collide_circle(self.P1.shield, bullet):
@@ -183,9 +174,17 @@ class Game:
         if self.P1.rect.collidelist(self.walls) > -1:
             self.P1.move_back()
 
-        for bullet in self.P1.bullets:
-            if bullet.rect.collidelist(self.walls) > -1:
-                self.P1.bullets.remove(bullet)
+        for bullet in self.bullets :
+            if isinstance(bullet, Bullet):
+                if bullet.rect.collidelist(self.walls) > -1:
+                    self.bullets.remove(bullet)
+                for sprite in self.all_sprite_group.sprites():
+                    if isinstance(sprite, Entity):
+                        if sprite.rect.colliderect(bullet.rect) and bullet.origin != sprite:
+                            self.bullets.remove(bullet)
+                            sprite.health -= bullet.damage
+                        if sprite.is_killed:
+                            sprite.disappear()
 
     def check_next_wave(self) -> None:
         if len(self.enemy_group.sprites()) == 0:
@@ -215,6 +214,9 @@ class Game:
 
             # Control enemy movement + shooting
             self.enemy_control()
+
+            self.bullets.update()
+            self.bullets.draw(self.WINDOW)
 
             # Update + collision detection
             # if not self.changing_level:

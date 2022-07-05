@@ -41,6 +41,8 @@ class Entity(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.center = self.position
+        if self.health <= 0:
+            self.is_killed = True
         if self.is_killed:
             self.disappear()
 
@@ -66,7 +68,7 @@ class Bullet(Entity):
     colour = (255, 0, 0)
     health = 1
 
-    def __init__(self, pos_x, pos_y, target_x, target_y, surface, delta_fps=1):
+    def __init__(self, pos_x, pos_y, target_x, target_y, surface, origin, delta_fps=1):
         Entity.__init__(self, pos_x=pos_x, pos_y=pos_y, surface=surface, delta_fps=delta_fps)
 
         self.initial_pos = [pos_x, pos_y]
@@ -76,6 +78,7 @@ class Bullet(Entity):
         self.dx = math.cos(self.angle) * self.speed
         self.dy = math.sin(self.angle) * self.speed
 
+        self.origin = origin
         self.damage = 30
 
     def update(self):
