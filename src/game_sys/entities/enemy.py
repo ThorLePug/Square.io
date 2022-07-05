@@ -95,10 +95,10 @@ class Boss1(SpiralShooter, _CanShield):
     score = 10
 
     def __init__(self, surface, delta_fps, x, y):
-        SpiralShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=3)
+        SpiralShooter.__init__(self, surface=surface, delta_fps=delta_fps, x=x, y=y, reload_time=6)
         _CanShield.__init__(self)
 
-        self.rotate_speed = math.pi/13
+        self.rotate_speed = math.pi/26
 
     @classmethod
     def spawn(cls, window_width, window_height, all_sprites: pygame.sprite.Group, walls: list[pygame.Rect],
@@ -110,5 +110,5 @@ class Boss1(SpiralShooter, _CanShield):
     def update(self):
         super().update()
         _CanShield.update(self, self.position, self.surface)
-
-        self.activate_shield(self.position, radius = 50)
+        if self.health < self.total_health/2:
+            self.activate_shield(self.position, radius = 50)

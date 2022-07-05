@@ -168,8 +168,6 @@ class Game:
                         if sprite.rect.colliderect(bullet.rect) and bullet.origin != sprite:
                             self.bullets.remove(bullet)
                             sprite.health -= bullet.damage
-                        if sprite.is_killed:
-                            sprite.disappear()
                     if isinstance(sprite, (Player, Boss1)):
                         if sprite.has_shield:
                             if pygame.sprite.collide_circle(bullet, sprite.shield) and bullet.origin != sprite:
